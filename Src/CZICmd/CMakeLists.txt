@@ -57,16 +57,24 @@ else()
     set(RAPIDJSON_INCLUDE_DIRS ${rapidjson_SOURCE_DIR}/include)
 endif()
 
-# make "CLI11" available
-FetchContent_Declare(
-  cli11
-  GIT_REPOSITORY https://github.com/CLIUtils/CLI11
-  GIT_TAG        v2.4.2
-)
+if (LIBCZI_BUILD_PREFER_EXTERNALPACKAGE_CLI11)
 
-set(CLI11_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-set(CLI11_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(cli11)
+  find_package(CLI11 CONFIG REQUIRED)
+
+else()
+
+  # make "CLI11" available
+  FetchContent_Declare(
+    cli11
+    GIT_REPOSITORY https://github.com/CLIUtils/CLI11
+    GIT_TAG        v2.4.2
+  )
+
+  set(CLI11_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+  set(CLI11_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+  FetchContent_MakeAvailable(cli11)
+
+endif()
 
 set (CZICMDSRCFILES
          BitmapGen.cpp          

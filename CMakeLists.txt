@@ -125,6 +125,10 @@ option(LIBCZI_BUILD_PREFER_EXTERNALPACKAGE_ZSTD "Prefer a ZSTD-package present o
 #  copy of RapidJSON during the CMake-run. This option is only relevant if building CZICmd.
 option(LIBCZI_BUILD_PREFER_EXTERNALPACKAGE_RAPIDJSON "Prefer an RapidJSON-package present on the system" ON)
 
+# Allow packages to be provided externally, for example, when using vcpkg.
+option(LIBCZI_BUILD_PREFER_EXTERNALPACKAGE_CLI11 "Prefer an external version of the CLI11 package" OFF)
+option(LIBCZI_BUILD_PREFER_EXTERNALPACKAGE_GOOGLETEST "Prefer an external version of the GTest package" OFF)
+
 if (LIBCZI_BUILD_UNITTESTS)
  include (CTest)
  enable_testing()
