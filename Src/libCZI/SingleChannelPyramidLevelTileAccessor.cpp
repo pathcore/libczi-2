@@ -85,7 +85,12 @@ void CSingleChannelPyramidLevelTileAccessor::InternalGet(libCZI::IBitmapData* pD
 
     const auto byLayer = CalcByLayer(subSet, pyramidInfo.minificationFactor);
     // ok, now we just have to look at our requested pyramid-layer
-    const auto& indices = byLayer.at(pyramidInfo.pyramidLayerNo).indices;
+    const auto itr = byLayer.find(pyramidInfo.pyramidLayerNo);
+    if (itr == byLayer.end()) {
+        return;
+    }
+
+    const auto& indices = itr->second.indices;
 
     // and now... copy...
     this->ComposeTiles(pDest, xPos, yPos, sizeOfPixelOnLayer0, static_cast<int>(indices.size()), options,
