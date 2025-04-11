@@ -276,6 +276,11 @@ set(libCZIPublicHeaders "ImportExport.h" "libCZI.h" "libCZI_Compositor.h" "libCZ
 
 if(BUILD_SHARED_LIBS)
 
+  get_target_property(ZSTD_ID libzstd_shared INCLUDE_DIRECTORIES)
+  message(WARNING "ZSTD INCLUDE_DIRECTORIES ${ZSTD_ID})
+  get_target_property(ZSTD_IID libzstd_shared INTERFACE_INCLUDE_DIRECTORIES)
+  message(WARNING "ZSTD INTERFACE_INCLUDE_DIRECTORIES ${ZSTD_IID})
+
   add_library(libCZI SHARED ${LIBCZISRCFILES} $<TARGET_OBJECTS:JxrDecodeStatic>)
 
   set_target_properties(libCZI PROPERTIES PREFIX "")
@@ -289,7 +294,6 @@ if(BUILD_SHARED_LIBS)
   set_target_properties(libCZI PROPERTIES PUBLIC_HEADER "${libCZIPublicHeaders}")
   if (LIBCZI_BUILD_PREFER_EXTERNALPACKAGE_ZSTD)
    message(WARNING "linking to libzstd_shared")
-   message(WARNING "include path $<TARGET_PROPERTY:libzstd_shared,INTERFACE_INCLUDE_DIRECTORIES>")
    target_link_libraries(libCZI PRIVATE libzstd_shared)
   else()
    target_link_libraries(libCZI PRIVATE libzstd_static)
@@ -315,6 +319,11 @@ if(BUILD_SHARED_LIBS)
 
   add_library(libCZI::libCZI ALIAS libCZI)
   add_library(libCZI::shared ALIAS libCZI)
+
+  get_target_property(CZI_ID libCZI INCLUDE_DIRECTORIES)
+  message(WARNING "CZI INCLUDE_DIRECTORIES ${CZI_ID})
+  get_target_property(CZI_IID libCZI INTERFACE_INCLUDE_DIRECTORIES)
+  message(WARNING "CZI INTERFACE_INCLUDE_DIRECTORIES ${CZI_IID})
 
 else()
 
