@@ -319,6 +319,15 @@ if(BUILD_SHARED_LIBS)
   add_library(libCZI::libCZI ALIAS libCZI)
   add_library(libCZI::shared ALIAS libCZI)
 
+  install(
+    TARGETS libCZI
+  	EXPORT libCZI
+    ARCHIVE  DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    LIBRARY  DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME  DESTINATION ${CMAKE_INSTALL_BINDIR}
+    PUBLIC_HEADER DESTINATION  ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
+  )
+
 else()
 
   # Notes: -we use JxrDecode as an "object-library" in order have it "embedded" into libCZI.a
@@ -363,27 +372,13 @@ else()
   add_library(libCZI::libCZI ALIAS libCZIStatic)
   add_library(libCZI::static ALIAS libCZIStatic)
 
-endif()
-
-#
-# Notes: - the variables CMAKE_INSTALL_<...> have been defined in the module "GNUInstallDirs"
-#install(FILES ${libCZIPublicHeaders} DESTINATION  ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME})
-if (BUILD_SHARED_LIBS)
-
-  install(TARGETS libCZI
-  #		 EXPORT "libCZI"
-     ARCHIVE  DESTINATION ${CMAKE_INSTALL_LIBDIR}
-     LIBRARY  DESTINATION ${CMAKE_INSTALL_LIBDIR}
-     RUNTIME  DESTINATION ${CMAKE_INSTALL_BINDIR}
-     PUBLIC_HEADER DESTINATION  ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME})
-
-else()
-
-  install(TARGETS libCZIStatic
-  #		 EXPORT "libCZIStatic"
+  install(
+      TARGETS libCZIStatic
+  	  EXPORT libCZI
       ARCHIVE  DESTINATION ${CMAKE_INSTALL_LIBDIR}
       LIBRARY  DESTINATION ${CMAKE_INSTALL_LIBDIR}
       RUNTIME  DESTINATION ${CMAKE_INSTALL_BINDIR}
-      PUBLIC_HEADER DESTINATION  ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME})
+      PUBLIC_HEADER DESTINATION  ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
+  )
 
 endif()

@@ -136,3 +136,44 @@ endif()
 
 add_subdirectory(Src)
 
+
+# generate config files
+
+export(
+  TARGETS
+    libCZI::libCZI
+  FILE
+    ${CMAKE_CURRENT_BINARY_DIR}/libCZIConfigTargets.cmake
+)
+
+install(
+  EXPORT
+    libCZI
+  DESTINATION
+    ${CMAKE_INSTALL_LIBDIR}/cmake/libCZI
+  FILE
+    libCZIConfigTargets.cmake
+)
+
+include(CMakePackageConfigHelpers)
+
+configure_package_config_file(
+  cmake/libCZIConfig.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/libCZIConfig.cmake
+  INSTALL_DESTINATION
+    ${CMAKE_INSTALL_LIBDIR}/cmake/libCZI
+)
+
+write_basic_package_version_file(
+  ${CMAKE_CURRENT_BINARY_DIR}/libCZIConfigVersion.cmake
+  COMPATIBILITY
+    SameMajorVersion
+) 
+
+install(
+  FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/libCZIConfig.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/libCZIConfigVersion.cmake
+  DESTINATION
+    ${CMAKE_INSTALL_LIBDIR}/cmake/libCZI
+)
