@@ -316,9 +316,6 @@ if(BUILD_SHARED_LIBS)
     target_link_libraries(libCZI PRIVATE ole32 Windowscodecs)
   endif()
 
-  add_library(libCZI::libCZI ALIAS libCZI)
-  add_library(libCZI::shared ALIAS libCZI)
-
   install(
     TARGETS libCZI
   	EXPORT libCZI
@@ -329,10 +326,9 @@ if(BUILD_SHARED_LIBS)
   )
 
   export(
-    TARGETS
-      libCZI
-    FILE
-      ${CMAKE_CURRENT_BINARY_DIR}/libCZIConfigTargets.cmake
+    TARGETS   libCZI
+    NAMESPACE libCZI::
+    FILE      ${CMAKE_CURRENT_BINARY_DIR}/libCZIConfigTargets.cmake
   )
 
 else()
@@ -376,9 +372,6 @@ else()
       target_link_libraries(libCZIStatic PUBLIC ole32 Windowscodecs)
   endif()
 
-  add_library(libCZI::libCZI ALIAS libCZIStatic)
-  add_library(libCZI::static ALIAS libCZIStatic)
-
   install(
       TARGETS libCZIStatic
   	  EXPORT libCZI
@@ -389,10 +382,9 @@ else()
   )
 
   export(
-    TARGETS
-      libCZIStatic
-    FILE
-      ${CMAKE_CURRENT_BINARY_DIR}/libCZIConfigTargets.cmake
+    TARGETS   libCZIStatic
+    NAMESPACE libCZI::
+    FILE      ${CMAKE_CURRENT_BINARY_DIR}/libCZIConfigTargets.cmake
   )
 
 endif()
