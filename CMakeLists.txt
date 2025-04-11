@@ -139,13 +139,6 @@ add_subdirectory(Src)
 
 # generate config files
 
-export(
-  TARGETS
-    libCZI::libCZI
-  FILE
-    ${CMAKE_CURRENT_BINARY_DIR}/libCZIConfigTargets.cmake
-)
-
 install(
   EXPORT
     libCZI

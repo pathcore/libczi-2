@@ -328,6 +328,13 @@ if(BUILD_SHARED_LIBS)
     PUBLIC_HEADER DESTINATION  ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
   )
 
+  export(
+    TARGETS
+      libCZI
+    FILE
+      ${CMAKE_CURRENT_BINARY_DIR}/libCZIConfigTargets.cmake
+  )
+
 else()
 
   # Notes: -we use JxrDecode as an "object-library" in order have it "embedded" into libCZI.a
@@ -379,6 +386,13 @@ else()
       LIBRARY  DESTINATION ${CMAKE_INSTALL_LIBDIR}
       RUNTIME  DESTINATION ${CMAKE_INSTALL_BINDIR}
       PUBLIC_HEADER DESTINATION  ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
+  )
+
+  export(
+    TARGETS
+      libCZIStatic
+    FILE
+      ${CMAKE_CURRENT_BINARY_DIR}/libCZIConfigTargets.cmake
   )
 
 endif()
