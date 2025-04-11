@@ -307,3 +307,6 @@ __pycache__/
 /CMakeSettings.json
 /Src/Build/html
 megalinter-reports/
+
+# Visual Studio Code
+.vscode/

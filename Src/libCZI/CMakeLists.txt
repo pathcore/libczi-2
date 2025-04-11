@@ -328,67 +328,63 @@ if(BUILD_SHARED_LIBS)
   export(
     TARGETS   libCZI
     NAMESPACE libCZI::
+    APPEND
     FILE      ${CMAKE_CURRENT_BINARY_DIR}/libCZIConfigTargets.cmake
   )
-
-  add_library(libCZI::libCZI ALIAS libCZI)
-
-else()
-
-  # Notes: -we use JxrDecode as an "object-library" in order have it "embedded" into libCZI.a
-  add_library(libCZIStatic STATIC ${LIBCZISRCFILES} $<TARGET_OBJECTS:JxrDecodeStatic>)
-
-  set_target_properties(libCZIStatic PROPERTIES PREFIX "")
-  set_target_properties(libCZIStatic PROPERTIES CXX_STANDARD 14)
-  target_compile_definitions(libCZIStatic PRIVATE _LIBCZISTATICLIB)
-  set_target_properties(libCZIStatic PROPERTIES VERSION ${PROJECT_VERSION})
-  # add the binary tree to the search path for include files so that we will find libCZI_Config.h
-  target_include_directories(libCZIStatic PRIVATE  "${CMAKE_CURRENT_BINARY_DIR}")
-  target_include_directories(libCZIStatic PRIVATE  ${EIGEN3_INCLUDE_DIR})
-  set_target_properties(libCZIStatic PROPERTIES DEBUG_POSTFIX "d")
-  set_target_properties(libCZIStatic PROPERTIES PUBLIC_HEADER "${libCZIPublicHeaders}")
-  if (LIBCZI_BUILD_PREFER_EXTERNALPACKAGE_ZSTD)
-    target_link_libraries(libCZIStatic PRIVATE zstd::libzstd_static)
-  else()
-    target_link_libraries(libCZIStatic PRIVATE libzstd_static)
-    target_include_directories(libCZIStatic PRIVATE ${zstd_SOURCE_DIR}/lib)
-  endif()
-
-  if (LIBCZI_BUILD_CURL_BASED_STREAM)
-    target_link_libraries(libCZIStatic PRIVATE CURL::libcurl)
-  endif()
-  if (LIBCZI_BUILD_AZURESDK_BASED_STREAM)
-    target_link_libraries(libCZIStatic PRIVATE Azure::azure-identity Azure::azure-storage-blobs)
-  endif()
-
-  if (LIBCZI_BUILD_PREFER_EXTERNALPACKAGE_EIGEN3)
-    target_link_libraries(libCZIStatic PRIVATE Eigen3::Eigen)
-  else()
-    add_dependencies(libCZIStatic eigen_ext)
-  endif()
-  IF(UNIX)
-    target_compile_options(libCZIStatic PRIVATE -D_FILE_OFFSET_BITS=64)
-    set_property(TARGET libCZIStatic PROPERTY POSITION_INDEPENDENT_CODE ON)
-  ENDIF(UNIX)
-  if(LIBCZI_HAVE_WIN32_API)
-      target_link_libraries(libCZIStatic PUBLIC ole32 Windowscodecs)
-  endif()
-
-  install(
-      TARGETS libCZIStatic
-  	  EXPORT libCZI
-      ARCHIVE  DESTINATION ${CMAKE_INSTALL_LIBDIR}
-      LIBRARY  DESTINATION ${CMAKE_INSTALL_LIBDIR}
-      RUNTIME  DESTINATION ${CMAKE_INSTALL_BINDIR}
-      PUBLIC_HEADER DESTINATION  ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
-  )
-
-  export(
-    TARGETS   libCZIStatic
-    NAMESPACE libCZI::
-    FILE      ${CMAKE_CURRENT_BINARY_DIR}/libCZIConfigTargets.cmake
-  )
-
-  add_library(libCZI::libCZI ALIAS libCZIStatic)
 
 endif()
+
+# Notes: -we use JxrDecode as an "object-library" in order have it "embedded" into libCZI.a
+add_library(libCZIStatic STATIC ${LIBCZISRCFILES} $<TARGET_OBJECTS:JxrDecodeStatic>)
+
+set_target_properties(libCZIStatic PROPERTIES PREFIX "")
+set_target_properties(libCZIStatic PROPERTIES CXX_STANDARD 14)
+target_compile_definitions(libCZIStatic PRIVATE _LIBCZISTATICLIB)
+set_target_properties(libCZIStatic PROPERTIES VERSION ${PROJECT_VERSION})
+# add the binary tree to the search path for include files so that we will find libCZI_Config.h
+target_include_directories(libCZIStatic PRIVATE  "${CMAKE_CURRENT_BINARY_DIR}")
+target_include_directories(libCZIStatic PRIVATE  ${EIGEN3_INCLUDE_DIR})
+set_target_properties(libCZIStatic PROPERTIES DEBUG_POSTFIX "d")
+set_target_properties(libCZIStatic PROPERTIES PUBLIC_HEADER "${libCZIPublicHeaders}")
+if (LIBCZI_BUILD_PREFER_EXTERNALPACKAGE_ZSTD)
+  target_link_libraries(libCZIStatic PRIVATE zstd::libzstd_static)
+else()
+  target_link_libraries(libCZIStatic PRIVATE libzstd_static)
+  target_include_directories(libCZIStatic PRIVATE ${zstd_SOURCE_DIR}/lib)
+endif()
+
+if (LIBCZI_BUILD_CURL_BASED_STREAM)
+  target_link_libraries(libCZIStatic PRIVATE CURL::libcurl)
+endif()
+if (LIBCZI_BUILD_AZURESDK_BASED_STREAM)
+  target_link_libraries(libCZIStatic PRIVATE Azure::azure-identity Azure::azure-storage-blobs)
+endif()
+
+if (LIBCZI_BUILD_PREFER_EXTERNALPACKAGE_EIGEN3)
+  target_link_libraries(libCZIStatic PRIVATE Eigen3::Eigen)
+else()
+  add_dependencies(libCZIStatic eigen_ext)
+endif()
+IF(UNIX)
+  target_compile_options(libCZIStatic PRIVATE -D_FILE_OFFSET_BITS=64)
+  set_property(TARGET libCZIStatic PROPERTY POSITION_INDEPENDENT_CODE ON)
+ENDIF(UNIX)
+if(LIBCZI_HAVE_WIN32_API)
+    target_link_libraries(libCZIStatic PUBLIC ole32 Windowscodecs)
+endif()
+
+install(
+    TARGETS libCZIStatic
+    EXPORT libCZI
+    ARCHIVE  DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    LIBRARY  DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME  DESTINATION ${CMAKE_INSTALL_BINDIR}
+    PUBLIC_HEADER DESTINATION  ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
+)
+
+export(
+  TARGETS   libCZIStatic
+  NAMESPACE libCZI::
+  APPEND
+  FILE      ${CMAKE_CURRENT_BINARY_DIR}/libCZIConfigTargets.cmake
+)
