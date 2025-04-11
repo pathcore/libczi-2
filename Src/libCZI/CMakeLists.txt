@@ -238,7 +238,14 @@ endif()
 
 
 if (LIBCZI_BUILD_PREFER_EXTERNALPACKAGE_ZSTD)
+  message(WARNING "find_package zstd")
+
+  get_property(IMP_BEFORE DIRECTORY "${CMAKE_SOURCE_DIR}" PROPERTY IMPORTED_TARGETS)
   find_package(zstd CONFIG REQUIRED)
+  get_property(IMP_AFTER DIRECTORY "${CMAKE_SOURCE_DIR}" PROPERTY IMPORTED_TARGETS)
+  list(REMOVE_ITEM IMP_AFTER ${IMP_BEFORE})
+  message(WARNING "imported targets ${IMP_AFTER}")
+    
 else()
   FetchContent_Declare(
     zstd
