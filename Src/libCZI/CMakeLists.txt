@@ -238,15 +238,8 @@ endif()
 
 
 if (LIBCZI_BUILD_PREFER_EXTERNALPACKAGE_ZSTD)
-  message(WARNING "find_package zstd")
 
-  get_property(IMP_BEFORE DIRECTORY "${CMAKE_SOURCE_DIR}" PROPERTY IMPORTED_TARGETS)
-  message(WARNING "targets before ${IMP_BEFORE}")
-  set(CMAKE_FIND_DEBUG_MODE TRUE)
   find_package(zstd CONFIG REQUIRED)
-  set(CMAKE_FIND_DEBUG_MODE FALSE)
-  get_property(IMP_AFTER DIRECTORY "${CMAKE_SOURCE_DIR}" PROPERTY IMPORTED_TARGETS)
-  message(WARNING "targets after ${IMP_AFTER}")    
 
 else()
   FetchContent_Declare(
@@ -285,11 +278,6 @@ set(libCZIPublicHeaders "ImportExport.h" "libCZI.h" "libCZI_Compositor.h" "libCZ
 
 if(BUILD_SHARED_LIBS)
 
-  get_target_property(ZSTD_ID libzstd_shared INCLUDE_DIRECTORIES)
-  message(WARNING "ZSTD INCLUDE_DIRECTORIES ${ZSTD_ID}")
-  get_target_property(ZSTD_IID libzstd_shared INTERFACE_INCLUDE_DIRECTORIES)
-  message(WARNING "ZSTD INTERFACE_INCLUDE_DIRECTORIES ${ZSTD_IID}")
-
   add_library(libCZI SHARED ${LIBCZISRCFILES} $<TARGET_OBJECTS:JxrDecodeStatic>)
 
   set_target_properties(libCZI PROPERTIES PREFIX "")
@@ -302,8 +290,10 @@ if(BUILD_SHARED_LIBS)
   set_target_properties(libCZI PROPERTIES DEBUG_POSTFIX "d")
   set_target_properties(libCZI PROPERTIES PUBLIC_HEADER "${libCZIPublicHeaders}")
   if (LIBCZI_BUILD_PREFER_EXTERNALPACKAGE_ZSTD)
-   message(WARNING "linking to libzstd_shared")
-   target_link_libraries(libCZI PRIVATE libzstd_shared)
+   if(NOT TARGET zstd::libzstd_shared)
+     message(FATAL_ERROR "target zstd::libzstd_shared not found")
+   endif()
+   target_link_libraries(libCZI PRIVATE zstd::libzstd_shared)
   else()
    target_link_libraries(libCZI PRIVATE libzstd_static)
    target_include_directories(libCZI PRIVATE ${zstd_SOURCE_DIR}/lib)
@@ -328,11 +318,6 @@ if(BUILD_SHARED_LIBS)
 
   add_library(libCZI::libCZI ALIAS libCZI)
   add_library(libCZI::shared ALIAS libCZI)
-
-  get_target_property(CZI_ID libCZI INCLUDE_DIRECTORIES)
-  message(WARNING "CZI INCLUDE_DIRECTORIES ${CZI_ID}")
-  get_target_property(CZI_IID libCZI INTERFACE_INCLUDE_DIRECTORIES)
-  message(WARNING "CZI INTERFACE_INCLUDE_DIRECTORIES ${CZI_IID}")
 
 else()
 
