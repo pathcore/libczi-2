@@ -137,15 +137,13 @@ endif()
 add_subdirectory(Src)
 
 
-# generate config files
+# generate package config/version files
 
 install(
-  EXPORT
-    libCZI
-  DESTINATION
-    share/libczi
-  FILE
-    libCZIConfigTargets.cmake
+  EXPORT        libCZI
+  DESTINATION   share/libczi
+  NAMESPACE     libCZI::
+  FILE          libCZIConfigTargets.cmake
 )
 
 include(CMakePackageConfigHelpers)
