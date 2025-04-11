@@ -109,7 +109,7 @@ option(LIBCZI_BUILD_UNITTESTS "Build the gTest-based unit-tests" ON)
 option(LIBCZI_BUILD_CZICMD "Build application 'CZICmd'." OFF)
 
 # Whether to build dynamic libCZI-library.
-option(LIBCZI_BUILD_DYNLIB "Build dynamic library for 'libCZI'." ON)
+option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
 
 # With this option one can choose between "downloading a private copy of Eigen3 during build" or use
 #  an existing Eigen3 (on the system). If CMake is unable to find an Eigen3-package (and this option is

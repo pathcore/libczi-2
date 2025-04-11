@@ -274,11 +274,10 @@ set(libCZIPublicHeaders "ImportExport.h" "libCZI.h" "libCZI_Compositor.h" "libCZ
                "libCZI_Helpers.h" "libCZI_Metadata.h" "libCZI_Metadata2.h" "libCZI_Pixels.h" "libCZI_ReadWrite.h"
                "libCZI_Site.h" "libCZI_Utilities.h" "libCZI_Write.h" "libCZI_compress.h" "libCZI_StreamsLib.h")
 
-#
-#define the shared libCZI - library
-#
-if (LIBCZI_BUILD_DYNLIB)
+if(BUILD_SHARED_LIBS)
+
   add_library(libCZI SHARED ${LIBCZISRCFILES} $<TARGET_OBJECTS:JxrDecodeStatic>)
+
   set_target_properties(libCZI PROPERTIES PREFIX "")
   set_target_properties(libCZI PROPERTIES CXX_STANDARD 14 CXX_STANDARD_REQUIRED YES) # https://crascit.com/2015/03/28/enabling-cxx11-in-cmake/
   SET_TARGET_PROPERTIES (libCZI PROPERTIES DEFINE_SYMBOL  "LIBCZI_EXPORTS" )
@@ -289,7 +288,7 @@ if (LIBCZI_BUILD_DYNLIB)
   set_target_properties(libCZI PROPERTIES DEBUG_POSTFIX "d")
   set_target_properties(libCZI PROPERTIES PUBLIC_HEADER "${libCZIPublicHeaders}")
   if (LIBCZI_BUILD_PREFER_EXTERNALPACKAGE_ZSTD)
-   target_link_libraries(libCZI PRIVATE zstd::libzstd_static)
+   target_link_libraries(libCZI PRIVATE zstd)
   else()
    target_link_libraries(libCZI PRIVATE libzstd_static)
    target_include_directories(libCZI PRIVATE ${zstd_SOURCE_DIR}/lib)
@@ -311,64 +310,75 @@ if (LIBCZI_BUILD_DYNLIB)
   if(LIBCZI_HAVE_WIN32_API)
     target_link_libraries(libCZI PRIVATE ole32 Windowscodecs)
   endif()
-endif(LIBCZI_BUILD_DYNLIB)
 
-#
-#define the static libCZI - library
-#
-# Notes: -we use JxrDecode as an "object-library" in order have it "embedded" into libCZI.a
-add_library(libCZIStatic STATIC ${LIBCZISRCFILES} $<TARGET_OBJECTS:JxrDecodeStatic>)
-set_target_properties(libCZIStatic PROPERTIES PREFIX "")
-set_target_properties(libCZIStatic PROPERTIES CXX_STANDARD 14)
-target_compile_definitions(libCZIStatic PRIVATE _LIBCZISTATICLIB)
-set_target_properties(libCZIStatic PROPERTIES VERSION ${PROJECT_VERSION})
-# add the binary tree to the search path for include files so that we will find libCZI_Config.h
-target_include_directories(libCZIStatic PRIVATE  "${CMAKE_CURRENT_BINARY_DIR}")
-target_include_directories(libCZIStatic PRIVATE  ${EIGEN3_INCLUDE_DIR})
-set_target_properties(libCZIStatic PROPERTIES DEBUG_POSTFIX "d")
-set_target_properties(libCZIStatic PROPERTIES PUBLIC_HEADER "${libCZIPublicHeaders}")
-if (LIBCZI_BUILD_PREFER_EXTERNALPACKAGE_ZSTD)
-   target_link_libraries(libCZIStatic PRIVATE zstd::libzstd_static)
+  add_library(libCZI::libCZI ALIAS libCZI)
+  add_library(libCZI::shared ALIAS libCZI)
+
 else()
-   target_link_libraries(libCZIStatic PRIVATE libzstd_static)
-   target_include_directories(libCZIStatic PRIVATE ${zstd_SOURCE_DIR}/lib)
-endif()
 
-if (LIBCZI_BUILD_CURL_BASED_STREAM)
-  target_link_libraries(libCZIStatic PRIVATE CURL::libcurl)
-endif()
-if (LIBCZI_BUILD_AZURESDK_BASED_STREAM)
-  target_link_libraries(libCZIStatic PRIVATE Azure::azure-identity Azure::azure-storage-blobs)
-endif()
+  # Notes: -we use JxrDecode as an "object-library" in order have it "embedded" into libCZI.a
+  add_library(libCZIStatic STATIC ${LIBCZISRCFILES} $<TARGET_OBJECTS:JxrDecodeStatic>)
 
-if (LIBCZI_BUILD_PREFER_EXTERNALPACKAGE_EIGEN3)
-  target_link_libraries(libCZIStatic PRIVATE Eigen3::Eigen)
-else()
-  add_dependencies(libCZIStatic eigen_ext)
-endif()
-IF(UNIX)
-  target_compile_options(libCZIStatic PRIVATE -D_FILE_OFFSET_BITS=64)
-  set_property(TARGET libCZIStatic PROPERTY POSITION_INDEPENDENT_CODE ON)
-ENDIF(UNIX)
-if(LIBCZI_HAVE_WIN32_API)
-    target_link_libraries(libCZIStatic PUBLIC ole32 Windowscodecs)
+  set_target_properties(libCZIStatic PROPERTIES PREFIX "")
+  set_target_properties(libCZIStatic PROPERTIES CXX_STANDARD 14)
+  target_compile_definitions(libCZIStatic PRIVATE _LIBCZISTATICLIB)
+  set_target_properties(libCZIStatic PROPERTIES VERSION ${PROJECT_VERSION})
+  # add the binary tree to the search path for include files so that we will find libCZI_Config.h
+  target_include_directories(libCZIStatic PRIVATE  "${CMAKE_CURRENT_BINARY_DIR}")
+  target_include_directories(libCZIStatic PRIVATE  ${EIGEN3_INCLUDE_DIR})
+  set_target_properties(libCZIStatic PROPERTIES DEBUG_POSTFIX "d")
+  set_target_properties(libCZIStatic PROPERTIES PUBLIC_HEADER "${libCZIPublicHeaders}")
+  if (LIBCZI_BUILD_PREFER_EXTERNALPACKAGE_ZSTD)
+    target_link_libraries(libCZIStatic PRIVATE zstd::libzstd_static)
+  else()
+    target_link_libraries(libCZIStatic PRIVATE libzstd_static)
+    target_include_directories(libCZIStatic PRIVATE ${zstd_SOURCE_DIR}/lib)
+  endif()
+
+  if (LIBCZI_BUILD_CURL_BASED_STREAM)
+    target_link_libraries(libCZIStatic PRIVATE CURL::libcurl)
+  endif()
+  if (LIBCZI_BUILD_AZURESDK_BASED_STREAM)
+    target_link_libraries(libCZIStatic PRIVATE Azure::azure-identity Azure::azure-storage-blobs)
+  endif()
+
+  if (LIBCZI_BUILD_PREFER_EXTERNALPACKAGE_EIGEN3)
+    target_link_libraries(libCZIStatic PRIVATE Eigen3::Eigen)
+  else()
+    add_dependencies(libCZIStatic eigen_ext)
+  endif()
+  IF(UNIX)
+    target_compile_options(libCZIStatic PRIVATE -D_FILE_OFFSET_BITS=64)
+    set_property(TARGET libCZIStatic PROPERTY POSITION_INDEPENDENT_CODE ON)
+  ENDIF(UNIX)
+  if(LIBCZI_HAVE_WIN32_API)
+      target_link_libraries(libCZIStatic PUBLIC ole32 Windowscodecs)
+  endif()
+
+  add_library(libCZI::libCZI ALIAS libCZIStatic)
+  add_library(libCZI::static ALIAS libCZIStatic)
+
 endif()
 
 #
 # Notes: - the variables CMAKE_INSTALL_<...> have been defined in the module "GNUInstallDirs"
 #install(FILES ${libCZIPublicHeaders} DESTINATION  ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME})
-if (LIBCZI_BUILD_DYNLIB)
+if (BUILD_SHARED_LIBS)
+
   install(TARGETS libCZI
   #		 EXPORT "libCZI"
      ARCHIVE  DESTINATION ${CMAKE_INSTALL_LIBDIR}
      LIBRARY  DESTINATION ${CMAKE_INSTALL_LIBDIR}
      RUNTIME  DESTINATION ${CMAKE_INSTALL_BINDIR}
      PUBLIC_HEADER DESTINATION  ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME})
-endif(LIBCZI_BUILD_DYNLIB)
 
-install(TARGETS libCZIStatic
-#		 EXPORT "libCZIStatic"
-     ARCHIVE  DESTINATION ${CMAKE_INSTALL_LIBDIR}
-     LIBRARY  DESTINATION ${CMAKE_INSTALL_LIBDIR}
-     RUNTIME  DESTINATION ${CMAKE_INSTALL_BINDIR}
-     PUBLIC_HEADER DESTINATION  ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME})
+else()
+
+  install(TARGETS libCZIStatic
+  #		 EXPORT "libCZIStatic"
+      ARCHIVE  DESTINATION ${CMAKE_INSTALL_LIBDIR}
+      LIBRARY  DESTINATION ${CMAKE_INSTALL_LIBDIR}
+      RUNTIME  DESTINATION ${CMAKE_INSTALL_BINDIR}
+      PUBLIC_HEADER DESTINATION  ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME})
+
+endif()
