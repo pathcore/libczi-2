@@ -331,6 +331,8 @@ if(BUILD_SHARED_LIBS)
     FILE      ${CMAKE_CURRENT_BINARY_DIR}/libCZIConfigTargets.cmake
   )
 
+  add_library(libCZI::libCZI ALIAS libCZI)
+
 else()
 
   # Notes: -we use JxrDecode as an "object-library" in order have it "embedded" into libCZI.a
@@ -386,5 +388,7 @@ else()
     NAMESPACE libCZI::
     FILE      ${CMAKE_CURRENT_BINARY_DIR}/libCZIConfigTargets.cmake
   )
+
+  add_library(libCZI::libCZI ALIAS libCZIStatic)
 
 endif()
