@@ -143,7 +143,7 @@ install(
   EXPORT
     libCZI
   DESTINATION
-    share/libCZI
+    share/libczi
   FILE
     libCZIConfigTargets.cmake
 )
@@ -154,7 +154,7 @@ configure_package_config_file(
   cmake/libCZIConfig.cmake.in
   ${CMAKE_CURRENT_BINARY_DIR}/libCZIConfig.cmake
   INSTALL_DESTINATION
-    share/libCZI
+    share/libczi
 )
 
 write_basic_package_version_file(
@@ -168,5 +168,5 @@ install(
     ${CMAKE_CURRENT_BINARY_DIR}/libCZIConfig.cmake
     ${CMAKE_CURRENT_BINARY_DIR}/libCZIConfigVersion.cmake
   DESTINATION
-    share/libCZI
+    share/libczi
 )
